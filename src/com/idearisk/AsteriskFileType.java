@@ -9,7 +9,7 @@ import javax.swing.*;
 public class AsteriskFileType extends LanguageFileType {
 	public static final AsteriskFileType INSTANCE = new AsteriskFileType();
 	private AsteriskFileType() {
-		super(AsteriskLang.INSTANCE);
+		super(AsteriskLanguage.INSTANCE);
 	}
 
 	@NotNull @Override public String getName() {
