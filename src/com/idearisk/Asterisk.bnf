@@ -1,0 +1,20 @@
+{
+  parserClass="com.idearisk.parser.AsteriskParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Simple"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.idearisk.psi"
+  psiImplPackage="com.idearisk.psi.impl"
+
+  elementTypeHolderClass="com.idearisk.psi.AsteriskTypes"
+  elementTypeClass="com.idearisk.psi.AsteriskElementType"
+  tokenTypeClass="com.idearisk.psi.AsteriskTokenType"
+}
+
+asteriskFile ::= item_*
+
+private item_ ::= (property|COMMENT|CRLF)
+
+property ::= (KEY? SEPARATOR VALUE?) | KEY
