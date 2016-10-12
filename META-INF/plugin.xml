@@ -29,6 +29,7 @@
       <fileTypeFactory implementation="com.idearisk.AsteriskFileTypeFactory"/>
       <lang.parserDefinition language="Asterisk" implementationClass="com.idearisk.AsteriskParserDefinition"/>
       <lang.syntaxHighlighterFactory language="Asterisk" implementationClass="com.idearisk.AsteriskSyntaxHighlighterFactory"/>
+      <colorSettingsPage implementation="com.idearisk.AsteriskColorSettingsPage"/>
   </extensions>
 
   <application-components>
