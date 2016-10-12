@@ -28,6 +28,7 @@
     <!-- Add your extensions here -->
       <fileTypeFactory implementation="com.idearisk.AsteriskFileTypeFactory"/>
       <lang.parserDefinition language="Asterisk" implementationClass="com.idearisk.AsteriskParserDefinition"/>
+      <lang.syntaxHighlighterFactory language="Asterisk" implementationClass="com.idearisk.AsteriskSyntaxHighlighterFactory"/>
   </extensions>
 
   <application-components>
