@@ -27,6 +27,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
       <fileTypeFactory implementation="com.idearisk.AsteriskFileTypeFactory"/>
+      <lang.parserDefinition language="Asterisk" implementationClass="com.idearisk.AsteriskParserDefinition"/>
   </extensions>
 
   <application-components>

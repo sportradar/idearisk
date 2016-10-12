@@ -20,7 +20,7 @@ public interface AsteriskTypes {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
        if (type == PROPERTY) {
-        return new SimplePropertyImpl(node);
+        return new AsteriskPropertyImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

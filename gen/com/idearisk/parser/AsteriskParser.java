@@ -68,10 +68,10 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "property")) return false;
     if (!nextTokenIs(b, "<property>", KEY, SEPARATOR)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, "<property>");
+    Marker m = enter_section_(b, l, _NONE_, PROPERTY, "<property>");
     r = property_0(b, l + 1);
     if (!r) r = consumeToken(b, KEY);
-    exit_section_(b, l, m, PROPERTY, r, false, null);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

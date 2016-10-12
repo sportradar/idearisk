@@ -3,7 +3,7 @@
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
-  psiClassPrefix="Simple"
+  psiClassPrefix="Asterisk"
   psiImplClassSuffix="Impl"
   psiPackage="com.idearisk.psi"
   psiImplPackage="com.idearisk.psi.impl"
