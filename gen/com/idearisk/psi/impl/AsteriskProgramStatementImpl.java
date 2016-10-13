@@ -11,14 +11,18 @@ import static com.idearisk.psi.AsteriskTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.idearisk.psi.*;
 
-public class SimplePropertyImpl extends ASTWrapperPsiElement implements SimpleProperty {
+public class AsteriskProgramStatementImpl extends ASTWrapperPsiElement implements AsteriskProgramStatement {
 
-  public SimplePropertyImpl(ASTNode node) {
+  public AsteriskProgramStatementImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull AsteriskVisitor visitor) {
+    visitor.visitProgramStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof SimpleVisitor) ((SimpleVisitor)visitor).visitProperty(this);
+    if (visitor instanceof AsteriskVisitor) accept((AsteriskVisitor)visitor);
     else super.accept(visitor);
   }
 

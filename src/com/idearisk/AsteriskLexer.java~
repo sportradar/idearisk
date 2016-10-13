@@ -23,7 +23,11 @@ class AsteriskLexer implements FlexLexer {
 
   /** lexical states */
   public static final int YYINITIAL = 0;
-  public static final int WAITING_VALUE = 2;
+  public static final int PROGRAM_INSTRUCTION = 2;
+  public static final int EXTENSION = 4;
+  public static final int PRIORITY = 6;
+  public static final int APPLICATION_NAME = 8;
+  public static final int APPLICATION_ARGS = 10;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -32,7 +36,7 @@ class AsteriskLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1, 1
+     0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5, 5
   };
 
   /** 
@@ -54,8 +58,10 @@ class AsteriskLexer implements FlexLexer {
 
   /* The ZZ_CMAP_A table has 320 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\0\1\3\1\1\1\6\1\7\1\2\22\0\1\5\31\0\1\11\1\10\1\0\1\12\1\13\35\0\1\4\50"+
-    "\0\1\6\242\0\2\6\26\0");
+    "\11\0\1\2\1\1\1\14\1\15\1\1\22\0\1\2\2\0\1\4\4\0\1\22\1\23\2\0\1\33\3\0\12"+
+    "\30\1\0\1\3\1\0\1\26\1\27\2\0\23\20\1\31\6\20\1\16\1\0\1\17\3\0\1\32\1\21"+
+    "\1\7\1\12\1\13\2\21\1\32\1\5\2\21\1\10\1\21\1\6\1\32\3\21\1\32\1\25\1\11\2"+
+    "\21\1\24\2\21\12\0\1\14\242\0\2\14\26\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -63,11 +69,12 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\1\1\1\2\1\3\1\4\2\5\1\6\1\7"+
-    "\1\3\1\7\2\0\1\6";
+    "\6\0\1\1\1\2\1\3\12\1\4\0\1\4\2\0"+
+    "\1\5\1\0\1\6\3\0\1\7\1\10\1\0\1\11"+
+    "\5\0\1\5\1\0\1\12\2\0\1\13";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[15];
+    int [] result = new int[47];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -92,11 +99,15 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\14\0\30\0\44\0\60\0\74\0\110\0\124"+
-    "\0\140\0\154\0\170\0\204\0\60\0\170\0\220";
+    "\0\0\0\34\0\70\0\124\0\160\0\214\0\250\0\304"+
+    "\0\340\0\374\0\u0118\0\u0134\0\u0150\0\u016c\0\u0188\0\u01a4"+
+    "\0\u01c0\0\u01dc\0\u01f8\0\u0214\0\u0230\0\u024c\0\u0268\0\250"+
+    "\0\u0188\0\u0284\0\250\0\u01c0\0\u01dc\0\u02a0\0\u02bc\0\u02d8"+
+    "\0\u024c\0\u0268\0\u02f4\0\u02a0\0\u0310\0\u032c\0\u0348\0\u0364"+
+    "\0\u0380\0\u02f4\0\u039c\0\u0380\0\u03b8\0\u03d4\0\u03d4";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[15];
+    int [] result = new int[47];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -119,19 +130,31 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\3\3\4\1\5\1\4\1\3\1\4\1\6\1\7"+
-    "\1\10\1\3\1\11\2\4\1\12\1\13\1\14\1\11"+
-    "\1\14\4\11\1\3\3\0\1\15\1\0\1\3\1\0"+
-    "\1\3\2\0\1\3\1\0\3\4\1\0\1\4\1\0"+
-    "\1\4\11\0\1\3\6\0\1\6\2\0\11\6\27\0"+
-    "\1\7\1\11\2\0\1\11\1\16\2\11\1\0\5\11"+
-    "\2\4\1\12\1\16\1\12\1\11\1\14\6\11\1\17"+
-    "\3\11\2\0\4\11\1\0\2\4\1\14\1\0\1\14"+
-    "\1\0\1\14\4\0\2\11\1\0\1\11\1\16\2\11"+
-    "\1\0\4\11";
+    "\1\7\2\10\1\11\1\12\6\7\1\13\1\0\1\10"+
+    "\1\14\16\7\2\10\11\7\1\0\1\10\10\7\1\15"+
+    "\6\7\2\10\2\7\1\16\6\7\1\0\1\10\7\7"+
+    "\1\16\2\7\1\17\2\16\2\7\2\10\3\7\1\20"+
+    "\5\7\1\0\1\10\12\7\1\21\4\7\2\10\11\7"+
+    "\1\0\1\10\2\7\1\22\10\7\1\22\3\7\2\10"+
+    "\11\7\1\0\1\10\4\7\1\23\11\7\35\0\2\10"+
+    "\12\0\1\10\16\0\1\11\1\0\32\11\5\0\1\24"+
+    "\52\0\1\25\7\0\1\26\1\0\12\26\2\0\16\26"+
+    "\27\0\1\27\37\0\1\30\30\0\1\31\2\0\1\30"+
+    "\22\0\1\32\10\0\1\33\22\0\1\32\5\0\1\34"+
+    "\2\0\1\33\5\0\7\35\4\0\2\35\2\0\2\35"+
+    "\3\0\2\35\1\0\1\36\1\0\12\36\2\0\16\36"+
+    "\6\0\1\37\52\0\1\40\6\0\1\26\1\0\12\26"+
+    "\2\0\1\26\1\41\14\26\2\0\1\42\12\0\1\42"+
+    "\16\0\1\43\1\0\12\43\2\0\16\43\1\36\1\0"+
+    "\12\36\2\0\5\36\1\44\10\36\7\0\1\45\37\0"+
+    "\1\46\20\0\1\43\1\0\12\43\2\0\5\43\1\47"+
+    "\10\43\10\0\1\50\31\0\1\51\25\0\1\43\1\0"+
+    "\12\43\2\0\5\43\1\47\7\43\1\52\11\0\1\53"+
+    "\24\0\1\54\12\0\1\54\30\0\1\55\34\0\1\56"+
+    "\20\0\1\57\1\0\12\57\2\0\16\57";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[156];
+    int [] result = new int[1008];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -169,10 +192,12 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\2\0\4\1\1\11\5\1\2\0\1\1";
+    "\6\0\1\11\14\1\4\0\1\11\2\0\1\11\1\0"+
+    "\1\1\3\0\2\1\1\0\1\1\5\0\1\1\1\0"+
+    "\1\1\2\0\1\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[15];
+    int [] result = new int[47];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -486,33 +511,49 @@ class AsteriskLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { yybegin(YYINITIAL); return AsteriskTypes.KEY;
+            { return TokenType.BAD_CHARACTER;
             }
-          case 8: break;
+          case 12: break;
           case 2: 
             { yybegin(YYINITIAL); return TokenType.WHITE_SPACE;
             }
-          case 9: break;
+          case 13: break;
           case 3: 
-            { return TokenType.BAD_CHARACTER;
-            }
-          case 10: break;
-          case 4: 
             { yybegin(YYINITIAL); return AsteriskTypes.COMMENT;
             }
-          case 11: break;
-          case 5: 
-            { yybegin(WAITING_VALUE); return AsteriskTypes.SEPARATOR;
-            }
-          case 12: break;
-          case 6: 
-            { yybegin(YYINITIAL); return AsteriskTypes.VALUE;
-            }
-          case 13: break;
-          case 7: 
-            { yybegin(WAITING_VALUE); return TokenType.WHITE_SPACE;
-            }
           case 14: break;
+          case 4: 
+            { yybegin(PRIORITY); return AsteriskTypes.EXT_EXTENSION;
+            }
+          case 15: break;
+          case 5: 
+            { yybegin(APPLICATION_NAME); return AsteriskTypes.EXT_PRIORITY;
+            }
+          case 16: break;
+          case 6: 
+            { yybegin(APPLICATION_ARGS); return AsteriskTypes.APPLICATION_NAME;
+            }
+          case 17: break;
+          case 7: 
+            { yybegin(YYINITIAL); return AsteriskTypes.EXTENSION_DEFINITION;
+            }
+          case 18: break;
+          case 8: 
+            { yybegin(EXTENSION); return AsteriskTypes.EXT_OPERATOR;
+            }
+          case 19: break;
+          case 9: 
+            { yybegin(YYINITIAL); return AsteriskTypes.APPLICATION_ARGS;
+            }
+          case 20: break;
+          case 10: 
+            { yybegin(PROGRAM_INSTRUCTION); return AsteriskTypes.EXT_INST_LEFT;
+            }
+          case 21: break;
+          case 11: 
+            { yybegin(YYINITIAL); return AsteriskTypes.INCLUDE;
+            }
+          case 22: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

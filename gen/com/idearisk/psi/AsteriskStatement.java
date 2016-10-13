@@ -5,6 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SimpleProperty extends PsiElement {
+public interface AsteriskStatement extends PsiElement {
+
+  @Nullable
+  AsteriskProgramStatement getProgramStatement();
 
 }

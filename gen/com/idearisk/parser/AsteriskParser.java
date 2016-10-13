@@ -23,8 +23,11 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == PROPERTY) {
-      r = property(b, 0);
+    if (t == PROGRAM_STATEMENT) {
+      r = PROGRAM_STATEMENT(b, 0);
+    }
+    else if (t == STATEMENT) {
+      r = STATEMENT(b, 0);
     }
     else {
       r = parse_root_(t, b, 0);
@@ -34,6 +37,31 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
 
   protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
     return asteriskFile(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // EXT_INST_LEFT EXT_OPERATOR EXT_EXTENSION EXT_PRIORITY APPLICATION_NAME APPLICATION_ARGS
+  public static boolean PROGRAM_STATEMENT(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PROGRAM_STATEMENT")) return false;
+    if (!nextTokenIs(b, EXT_INST_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, EXT_INST_LEFT, EXT_OPERATOR, EXT_EXTENSION, EXT_PRIORITY, APPLICATION_NAME, APPLICATION_ARGS);
+    exit_section_(b, m, PROGRAM_STATEMENT, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // INCLUDE | EXTENSION_DEFINITION | PROGRAM_STATEMENT
+  public static boolean STATEMENT(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "STATEMENT")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, STATEMENT, "<statement>");
+    r = consumeToken(b, INCLUDE);
+    if (!r) r = consumeToken(b, EXTENSION_DEFINITION);
+    if (!r) r = PROGRAM_STATEMENT(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -50,55 +78,16 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // property|COMMENT|CRLF
+  // STATEMENT|COMMENT|CRLF
   static boolean item_(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item_")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = property(b, l + 1);
+    r = STATEMENT(b, l + 1);
     if (!r) r = consumeToken(b, COMMENT);
     if (!r) r = consumeToken(b, CRLF);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  /* ********************************************************** */
-  // (KEY? SEPARATOR VALUE?) | KEY
-  public static boolean property(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "property")) return false;
-    if (!nextTokenIs(b, "<property>", KEY, SEPARATOR)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, PROPERTY, "<property>");
-    r = property_0(b, l + 1);
-    if (!r) r = consumeToken(b, KEY);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // KEY? SEPARATOR VALUE?
-  private static boolean property_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "property_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = property_0_0(b, l + 1);
-    r = r && consumeToken(b, SEPARATOR);
-    r = r && property_0_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // KEY?
-  private static boolean property_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "property_0_0")) return false;
-    consumeToken(b, KEY);
-    return true;
-  }
-
-  // VALUE?
-  private static boolean property_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "property_0_2")) return false;
-    consumeToken(b, VALUE);
-    return true;
   }
 
 }

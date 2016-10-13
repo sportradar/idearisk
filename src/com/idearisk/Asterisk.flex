@@ -17,27 +17,45 @@ import com.intellij.psi.TokenType;
 
 CRLF= \n|\r|\r\n
 WHITE_SPACE=[\ \t\f]
-FIRST_VALUE_CHARACTER=[^ \n\r\f\\] | "\\"{CRLF} | "\\".
-VALUE_CHARACTER=[^\n\r\f\\] | "\\"{CRLF} | "\\".
 END_OF_LINE_COMMENT=(";")[^\r\n]*
-SEPARATOR=[:=] | =>
-KEY_CHARACTER=[^:=\ \n\r\t\f\\] | "\\ "
 
-%state WAITING_VALUE
+INCLUDE="#include".+
+
+EXTENSION_DEFINITION="[".+"]"
+
+APPLICATION_NAME=[A-Z][a-zA-Z]+
+APPLICATION_ARGS="(".+")"
+
+EXT_INST_LEFT="exten"
+EXT_OPERATOR="=>"
+EXT_EXTENSION=[0-9]+ | [hioatTs]
+EXT_PRIORITY=[0-9]+ | n | [0-9]+"(".+")" | n"(".+")"
+
+%state PROGRAM_INSTRUCTION
+%state EXTENSION
+%state PRIORITY
+%state APPLICATION_NAME
+%state APPLICATION_ARGS
 
 %%
 
 <YYINITIAL> {END_OF_LINE_COMMENT}                           { yybegin(YYINITIAL); return AsteriskTypes.COMMENT; }
 
-<YYINITIAL> {KEY_CHARACTER}+                                { yybegin(YYINITIAL); return AsteriskTypes.KEY; }
+<YYINITIAL> {EXTENSION_DEFINITION}                          { yybegin(YYINITIAL); return AsteriskTypes.EXTENSION_DEFINITION; }
 
-<YYINITIAL> {SEPARATOR}                                     { yybegin(WAITING_VALUE); return AsteriskTypes.SEPARATOR; }
+<YYINITIAL> {INCLUDE}                                       { yybegin(YYINITIAL); return AsteriskTypes.INCLUDE; }
 
-<WAITING_VALUE> {CRLF}({CRLF}|{WHITE_SPACE})+               { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+<YYINITIAL> {EXT_INST_LEFT}{WHITE_SPACE}+                   { yybegin(PROGRAM_INSTRUCTION); return AsteriskTypes.EXT_INST_LEFT; }
 
-<WAITING_VALUE> {WHITE_SPACE}+                              { yybegin(WAITING_VALUE); return TokenType.WHITE_SPACE; }
+<PROGRAM_INSTRUCTION> {EXT_OPERATOR}{WHITE_SPACE}+          { yybegin(EXTENSION); return AsteriskTypes.EXT_OPERATOR; }
 
-<WAITING_VALUE> {FIRST_VALUE_CHARACTER}{VALUE_CHARACTER}*   { yybegin(YYINITIAL); return AsteriskTypes.VALUE; }
+<EXTENSION> {EXT_EXTENSION},                                { yybegin(PRIORITY); return AsteriskTypes.EXT_EXTENSION; }
+
+<PRIORITY> {EXT_PRIORITY},                                  { yybegin(APPLICATION_NAME); return AsteriskTypes.EXT_PRIORITY; }
+
+<APPLICATION_NAME> {APPLICATION_NAME}                       { yybegin(APPLICATION_ARGS); return AsteriskTypes.APPLICATION_NAME; }
+
+<APPLICATION_ARGS> {APPLICATION_ARGS}                       { yybegin(YYINITIAL); return AsteriskTypes.APPLICATION_ARGS; }
 
 ({CRLF}|{WHITE_SPACE})+                                     { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
 
