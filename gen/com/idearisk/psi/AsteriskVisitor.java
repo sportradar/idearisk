@@ -7,6 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public class AsteriskVisitor extends PsiElementVisitor {
 
+  public void visitIncludeCtx(@NotNull AsteriskIncludeCtx o) {
+    visitPsiElement(o);
+  }
+
+  public void visitIncludeFile(@NotNull AsteriskIncludeFile o) {
+    visitPsiElement(o);
+  }
+
   public void visitProgramStatement(@NotNull AsteriskProgramStatement o) {
     visitPsiElement(o);
   }

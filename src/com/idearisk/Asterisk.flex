@@ -18,13 +18,17 @@ import com.intellij.psi.TokenType;
 CRLF= \n|\r|\r\n
 WHITE_SPACE=[\ \t\f]
 END_OF_LINE_COMMENT=(";")[^\r\n]*
+CHARACTER=[^:=>\ \n\r\t\f\\]
+SEPARATOR=,
 
-INCLUDE="#include".+
+INCLUDE="#include"
 
 EXTENSION_DEFINITION="[".+"]"
 
 APPLICATION_NAME=[A-Z][a-zA-Z]+
 APPLICATION_ARGS="(".+")"
+
+INCLUDE_CTX_LEFT="include"
 
 EXT_INST_LEFT="exten"
 EXT_OPERATOR="=>"
@@ -36,29 +40,104 @@ EXT_PRIORITY=[0-9]+ | n | [0-9]+"(".+")" | n"(".+")"
 %state PRIORITY
 %state APPLICATION_NAME
 %state APPLICATION_ARGS
+%state INCLUDE_FILE
+%state INCLUDE_CTX
 
 %%
 
-<YYINITIAL> {END_OF_LINE_COMMENT}                           { yybegin(YYINITIAL); return AsteriskTypes.COMMENT; }
+<YYINITIAL> {END_OF_LINE_COMMENT} {
+    yybegin(YYINITIAL);
+    return AsteriskTypes.COMMENT;
+}
 
-<YYINITIAL> {EXTENSION_DEFINITION}                          { yybegin(YYINITIAL); return AsteriskTypes.EXTENSION_DEFINITION; }
+<YYINITIAL> {EXTENSION_DEFINITION} {
+    yybegin(YYINITIAL);
+    return AsteriskTypes.EXTENSION_DEFINITION;
+}
 
-<YYINITIAL> {INCLUDE}                                       { yybegin(YYINITIAL); return AsteriskTypes.INCLUDE; }
+<YYINITIAL> {INCLUDE} {
+  yybegin(INCLUDE_FILE);
+  return AsteriskTypes.INCLUDE_STMT;
+}
 
-<YYINITIAL> {EXT_INST_LEFT}{WHITE_SPACE}+                   { yybegin(PROGRAM_INSTRUCTION); return AsteriskTypes.EXT_INST_LEFT; }
+<INCLUDE_FILE> {
+    {CHARACTER}+ {
+      yybegin(YYINITIAL);
+      return AsteriskTypes.INCLUDE_FILE_TARGET;
+    }
+}
 
-<PROGRAM_INSTRUCTION> {EXT_OPERATOR}{WHITE_SPACE}+          { yybegin(EXTENSION); return AsteriskTypes.EXT_OPERATOR; }
+<YYINITIAL> {INCLUDE_CTX_LEFT} {
+    yybegin(INCLUDE_CTX);
+    return AsteriskTypes.INCLUDE_CTX_LEFT;
+}
 
-<EXTENSION> {EXT_EXTENSION},                                { yybegin(PRIORITY); return AsteriskTypes.EXT_EXTENSION; }
+<INCLUDE_CTX> {
+    {EXT_OPERATOR} {
+      yybegin(INCLUDE_CTX);
+      return AsteriskTypes.EXT_OPERATOR;
+    }
+    {CHARACTER}+ {
+      yybegin(YYINITIAL);
+      return AsteriskTypes.INCLUDE_CTX_CONTEXT;
+    }
+}
 
-<PRIORITY> {EXT_PRIORITY},                                  { yybegin(APPLICATION_NAME); return AsteriskTypes.EXT_PRIORITY; }
+<YYINITIAL> {EXT_INST_LEFT} {
+    yybegin(PROGRAM_INSTRUCTION);
+    return AsteriskTypes.EXT_INST_LEFT;
+}
 
-<APPLICATION_NAME> {APPLICATION_NAME}                       { yybegin(APPLICATION_ARGS); return AsteriskTypes.APPLICATION_NAME; }
+<PROGRAM_INSTRUCTION> {
+    {EXT_OPERATOR} {
+      yybegin(EXTENSION);
+       return AsteriskTypes.EXT_OPERATOR;
+    }
+}
 
-<APPLICATION_ARGS> {APPLICATION_ARGS}                       { yybegin(YYINITIAL); return AsteriskTypes.APPLICATION_ARGS; }
+<EXTENSION> {
+    {EXT_EXTENSION} {
+      yybegin(EXTENSION);
+      return AsteriskTypes.EXT_EXTENSION;
+    }
+    {SEPARATOR} {
+      yybegin(PRIORITY);
+      return AsteriskTypes.SEPARATOR;
+    }
+}
 
-({CRLF}|{WHITE_SPACE})+                                     { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+<PRIORITY> {
+    {EXT_PRIORITY} {
+      yybegin(APPLICATION_NAME);
+      return AsteriskTypes.EXT_PRIORITY;
+    }
+}
 
-{WHITE_SPACE}+                                              { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+<APPLICATION_NAME> {APPLICATION_NAME} {
+    yybegin(APPLICATION_ARGS);
+    return AsteriskTypes.APPLICATION_NAME;
+}
 
-.                                                           { return TokenType.BAD_CHARACTER; }
+<APPLICATION_ARGS> {APPLICATION_ARGS} {
+    yybegin(YYINITIAL);
+    return AsteriskTypes.APPLICATION_ARGS;
+}
+
+{WHITE_SPACE}+ {
+  yybegin(yystate());
+  return TokenType.WHITE_SPACE;
+}
+
+{SEPARATOR} {
+  yybegin(yystate());
+  return AsteriskTypes.SEPARATOR;
+}
+
+({CRLF}|{WHITE_SPACE})+ {
+    yybegin(YYINITIAL);
+    return TokenType.WHITE_SPACE;
+}
+
+. {
+    return TokenType.BAD_CHARACTER;
+}

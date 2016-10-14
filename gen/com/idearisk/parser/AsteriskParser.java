@@ -23,7 +23,13 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == PROGRAM_STATEMENT) {
+    if (t == INCLUDE_CTX) {
+      r = INCLUDE_CTX(b, 0);
+    }
+    else if (t == INCLUDE_FILE) {
+      r = INCLUDE_FILE(b, 0);
+    }
+    else if (t == PROGRAM_STATEMENT) {
       r = PROGRAM_STATEMENT(b, 0);
     }
     else if (t == STATEMENT) {
@@ -40,26 +46,51 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // EXT_INST_LEFT EXT_OPERATOR EXT_EXTENSION EXT_PRIORITY APPLICATION_NAME APPLICATION_ARGS
+  // INCLUDE_CTX_LEFT INCLUDE_CTX_OPERATOR INCLUDE_CTX_CONTEXT
+  public static boolean INCLUDE_CTX(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "INCLUDE_CTX")) return false;
+    if (!nextTokenIs(b, INCLUDE_CTX_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, INCLUDE_CTX_LEFT, INCLUDE_CTX_OPERATOR, INCLUDE_CTX_CONTEXT);
+    exit_section_(b, m, INCLUDE_CTX, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // INCLUDE_STMT INCLUDE_FILE_TARGET
+  public static boolean INCLUDE_FILE(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "INCLUDE_FILE")) return false;
+    if (!nextTokenIs(b, INCLUDE_STMT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, INCLUDE_STMT, INCLUDE_FILE_TARGET);
+    exit_section_(b, m, INCLUDE_FILE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // EXT_INST_LEFT EXT_OPERATOR EXT_EXTENSION SEPARATOR EXT_PRIORITY SEPARATOR APPLICATION_NAME APPLICATION_ARGS
   public static boolean PROGRAM_STATEMENT(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "PROGRAM_STATEMENT")) return false;
     if (!nextTokenIs(b, EXT_INST_LEFT)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, EXT_INST_LEFT, EXT_OPERATOR, EXT_EXTENSION, EXT_PRIORITY, APPLICATION_NAME, APPLICATION_ARGS);
+    r = consumeTokens(b, 0, EXT_INST_LEFT, EXT_OPERATOR, EXT_EXTENSION, SEPARATOR, EXT_PRIORITY, SEPARATOR, APPLICATION_NAME, APPLICATION_ARGS);
     exit_section_(b, m, PROGRAM_STATEMENT, r);
     return r;
   }
 
   /* ********************************************************** */
-  // INCLUDE | EXTENSION_DEFINITION | PROGRAM_STATEMENT
+  // INCLUDE_FILE | EXTENSION_DEFINITION | PROGRAM_STATEMENT | INCLUDE_CTX
   public static boolean STATEMENT(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "STATEMENT")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, STATEMENT, "<statement>");
-    r = consumeToken(b, INCLUDE);
+    r = INCLUDE_FILE(b, l + 1);
     if (!r) r = consumeToken(b, EXTENSION_DEFINITION);
     if (!r) r = PROGRAM_STATEMENT(b, l + 1);
+    if (!r) r = INCLUDE_CTX(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

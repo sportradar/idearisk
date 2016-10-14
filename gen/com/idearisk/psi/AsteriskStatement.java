@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface AsteriskStatement extends PsiElement {
 
   @Nullable
+  AsteriskIncludeCtx getIncludeCtx();
+
+  @Nullable
+  AsteriskIncludeFile getIncludeFile();
+
+  @Nullable
   AsteriskProgramStatement getProgramStatement();
 
 }

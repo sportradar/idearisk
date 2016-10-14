@@ -11,37 +11,19 @@ import static com.idearisk.psi.AsteriskTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.idearisk.psi.*;
 
-public class AsteriskStatementImpl extends ASTWrapperPsiElement implements AsteriskStatement {
+public class AsteriskIncludeFileImpl extends ASTWrapperPsiElement implements AsteriskIncludeFile {
 
-  public AsteriskStatementImpl(ASTNode node) {
+  public AsteriskIncludeFileImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull AsteriskVisitor visitor) {
-    visitor.visitStatement(this);
+    visitor.visitIncludeFile(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof AsteriskVisitor) accept((AsteriskVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public AsteriskIncludeCtx getIncludeCtx() {
-    return findChildByClass(AsteriskIncludeCtx.class);
-  }
-
-  @Override
-  @Nullable
-  public AsteriskIncludeFile getIncludeFile() {
-    return findChildByClass(AsteriskIncludeFile.class);
-  }
-
-  @Override
-  @Nullable
-  public AsteriskProgramStatement getProgramStatement() {
-    return findChildByClass(AsteriskProgramStatement.class);
   }
 
 }
