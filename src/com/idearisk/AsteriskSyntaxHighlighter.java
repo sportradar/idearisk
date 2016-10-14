@@ -15,12 +15,8 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 
 public class AsteriskSyntaxHighlighter extends SyntaxHighlighterBase {
 
-	public static final TextAttributesKey SEPARATOR =
-      createTextAttributesKey("ASTERISK_SEPARATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
   public static final TextAttributesKey KEY =
       createTextAttributesKey("ASTERISK_KEY", DefaultLanguageHighlighterColors.KEYWORD);
-  public static final TextAttributesKey VALUE =
-      createTextAttributesKey("ASTERISK_VALUE", DefaultLanguageHighlighterColors.STRING);
   public static final TextAttributesKey COMMENT =
       createTextAttributesKey("ASTERISK_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
   public static final TextAttributesKey BAD_CHARACTER =
@@ -33,6 +29,8 @@ public class AsteriskSyntaxHighlighter extends SyntaxHighlighterBase {
 			createTextAttributesKey("ASTERISK_APPLICATION_ARGS", DefaultLanguageHighlighterColors.STATIC_METHOD);
 	public static final TextAttributesKey INCLUDE =
 			createTextAttributesKey("ASTERISK_INCLUDE", JavaHighlightingColors.ANNOTATION_NAME_ATTRIBUTES);
+	public static final TextAttributesKey EXTENSION_DEFINITION =
+			createTextAttributesKey("ASTERISK_EXTENSION_DEFINITION", DefaultLanguageHighlighterColors.KEYWORD);
 
   private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
   private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[]{COMMENT};
@@ -62,6 +60,8 @@ public class AsteriskSyntaxHighlighter extends SyntaxHighlighterBase {
 			return APPLICATION_ARGUMENTS;
 		} else if (isInclude(tokenType)) {
 			return INCLUDES;
+		} else if (tokenType.equals(AsteriskTypes.EXTENSION_DEFINITION)) {
+			return new TextAttributesKey[]{EXTENSION_DEFINITION};
 		} else {
       return EMPTY_KEYS;
     }
@@ -70,11 +70,6 @@ public class AsteriskSyntaxHighlighter extends SyntaxHighlighterBase {
 	private static boolean isInclude(IElementType tokenType) {
 		return tokenType.equals(AsteriskTypes.INCLUDE_STMT)
 				|| tokenType.equals(AsteriskTypes.INCLUDE_FILE_TARGET);
-	}
-
-	private static boolean isApplicationCall(IElementType tokenType) {
-		return tokenType.equals(AsteriskTypes.APPLICATION_NAME)
-				|| tokenType.equals(AsteriskTypes.APPLICATION_ARGS);
 	}
 
 	private static boolean isKeyword(IElementType tokenType) {

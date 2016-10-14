@@ -14,9 +14,10 @@ import java.util.Map;
 public class AsteriskColorSettingsPage implements ColorSettingsPage {
 
 	private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
-			new AttributesDescriptor("Key", AsteriskSyntaxHighlighter.KEY),
-			new AttributesDescriptor("Separator", AsteriskSyntaxHighlighter.SEPARATOR),
-			new AttributesDescriptor("Value", AsteriskSyntaxHighlighter.VALUE),
+			new AttributesDescriptor("Keyword", AsteriskSyntaxHighlighter.KEY),
+			new AttributesDescriptor("Extension definition", AsteriskSyntaxHighlighter.EXTENSION_DEFINITION),
+			new AttributesDescriptor("Application call", AsteriskSyntaxHighlighter.APPLICATION_CALL),
+			new AttributesDescriptor("Application arguments", AsteriskSyntaxHighlighter.APPLICATION_ARGS),
 	};
 
 
@@ -29,7 +30,16 @@ public class AsteriskColorSettingsPage implements ColorSettingsPage {
 	}
 
 	@NotNull @Override public String getDemoText() {
-		return "Hest";
+		return "; Some comments to start with\n"
+				+ "; Another comment just for the hell of it\n\n"
+				+ "[extension-definition]\n"
+				+ "variable1=value\n"
+				+ "variable2=I've got white space characters in my variable value and everything\n\n"
+				+ "#include needthis.conf\n"
+				+ "#include needthisaswell.conf\n\n"
+				+ "[another-extension-definition]\n\n"
+				+ "include => extension-include\n"
+				+ "exten => 1,1,ApplicationCall(application arguments)";
 	}
 
 	@Nullable @Override public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
