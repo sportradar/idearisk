@@ -23,7 +23,10 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == INCLUDE_CTX) {
+    if (t == ASSIGNMENT) {
+      r = ASSIGNMENT(b, 0);
+    }
+    else if (t == INCLUDE_CTX) {
       r = INCLUDE_CTX(b, 0);
     }
     else if (t == INCLUDE_FILE) {
@@ -43,6 +46,18 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
 
   protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
     return asteriskFile(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // VAR_NAME ASSIGNMENT_OPERATOR VAR_VAL
+  public static boolean ASSIGNMENT(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ASSIGNMENT")) return false;
+    if (!nextTokenIs(b, VAR_NAME)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, VAR_NAME, ASSIGNMENT_OPERATOR, VAR_VAL);
+    exit_section_(b, m, ASSIGNMENT, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -82,13 +97,14 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // INCLUDE_FILE | EXTENSION_DEFINITION | PROGRAM_STATEMENT | INCLUDE_CTX
+  // EXTENSION_DEFINITION | INCLUDE_FILE | ASSIGNMENT | PROGRAM_STATEMENT | INCLUDE_CTX
   public static boolean STATEMENT(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "STATEMENT")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, STATEMENT, "<statement>");
-    r = INCLUDE_FILE(b, l + 1);
-    if (!r) r = consumeToken(b, EXTENSION_DEFINITION);
+    r = consumeToken(b, EXTENSION_DEFINITION);
+    if (!r) r = INCLUDE_FILE(b, l + 1);
+    if (!r) r = ASSIGNMENT(b, l + 1);
     if (!r) r = PROGRAM_STATEMENT(b, l + 1);
     if (!r) r = INCLUDE_CTX(b, l + 1);
     exit_section_(b, l, m, r, false, null);

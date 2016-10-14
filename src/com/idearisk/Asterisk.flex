@@ -20,6 +20,7 @@ WHITE_SPACE=[\ \t\f]
 END_OF_LINE_COMMENT=(";")[^\r\n]*
 CHARACTER=[^:=>\ \n\r\t\f\\]
 SEPARATOR=,
+ASSIGNMENT_OPERATOR="="
 
 INCLUDE="#include"
 
@@ -29,6 +30,7 @@ APPLICATION_NAME=[A-Z][a-zA-Z]+
 APPLICATION_ARGS="(".+")"
 
 INCLUDE_CTX_LEFT="include"
+INCLUDE_CTX_OPERATOR="=>"
 
 EXT_INST_LEFT="exten"
 EXT_OPERATOR="=>"
@@ -42,6 +44,8 @@ EXT_PRIORITY=[0-9]+ | n | [0-9]+"(".+")" | n"(".+")"
 %state APPLICATION_ARGS
 %state INCLUDE_FILE
 %state INCLUDE_CTX
+%state ASSIGNMENT
+%state ASSIGNMENT_VAL
 
 %%
 
@@ -67,21 +71,25 @@ EXT_PRIORITY=[0-9]+ | n | [0-9]+"(".+")" | n"(".+")"
     }
 }
 
+
+
 <YYINITIAL> {INCLUDE_CTX_LEFT} {
     yybegin(INCLUDE_CTX);
     return AsteriskTypes.INCLUDE_CTX_LEFT;
 }
 
 <INCLUDE_CTX> {
-    {EXT_OPERATOR} {
+    {INCLUDE_CTX_OPERATOR} {
       yybegin(INCLUDE_CTX);
-      return AsteriskTypes.EXT_OPERATOR;
+      return AsteriskTypes.INCLUDE_CTX_OPERATOR;
     }
     {CHARACTER}+ {
       yybegin(YYINITIAL);
       return AsteriskTypes.INCLUDE_CTX_CONTEXT;
     }
 }
+
+
 
 <YYINITIAL> {EXT_INST_LEFT} {
     yybegin(PROGRAM_INSTRUCTION);
@@ -122,6 +130,29 @@ EXT_PRIORITY=[0-9]+ | n | [0-9]+"(".+")" | n"(".+")"
     yybegin(YYINITIAL);
     return AsteriskTypes.APPLICATION_ARGS;
 }
+
+
+
+<YYINITIAL> {CHARACTER}+ {
+    yybegin(ASSIGNMENT);
+    return AsteriskTypes.VAR_NAME;
+}
+
+<ASSIGNMENT> {
+    {ASSIGNMENT_OPERATOR} {
+      yybegin(ASSIGNMENT_VAL);
+      return AsteriskTypes.ASSIGNMENT_OPERATOR;
+    }
+}
+
+<ASSIGNMENT_VAL> {
+    .+ {
+      yybegin(YYINITIAL);
+      return AsteriskTypes.VAR_VAL;
+    }
+}
+
+
 
 {WHITE_SPACE}+ {
   yybegin(yystate());

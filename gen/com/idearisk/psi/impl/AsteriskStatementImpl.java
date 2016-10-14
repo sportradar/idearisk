@@ -28,6 +28,12 @@ public class AsteriskStatementImpl extends ASTWrapperPsiElement implements Aster
 
   @Override
   @Nullable
+  public AsteriskAssignment getAssignment() {
+    return findChildByClass(AsteriskAssignment.class);
+  }
+
+  @Override
+  @Nullable
   public AsteriskIncludeCtx getIncludeCtx() {
     return findChildByClass(AsteriskIncludeCtx.class);
   }

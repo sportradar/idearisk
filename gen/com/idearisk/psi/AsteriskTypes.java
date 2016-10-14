@@ -8,6 +8,7 @@ import com.idearisk.psi.impl.*;
 
 public interface AsteriskTypes {
 
+  IElementType ASSIGNMENT = new AsteriskElementType("ASSIGNMENT");
   IElementType INCLUDE_CTX = new AsteriskElementType("INCLUDE_CTX");
   IElementType INCLUDE_FILE = new AsteriskElementType("INCLUDE_FILE");
   IElementType PROGRAM_STATEMENT = new AsteriskElementType("PROGRAM_STATEMENT");
@@ -15,6 +16,7 @@ public interface AsteriskTypes {
 
   IElementType APPLICATION_ARGS = new AsteriskTokenType("APPLICATION_ARGS");
   IElementType APPLICATION_NAME = new AsteriskTokenType("APPLICATION_NAME");
+  IElementType ASSIGNMENT_OPERATOR = new AsteriskTokenType("ASSIGNMENT_OPERATOR");
   IElementType COMMENT = new AsteriskTokenType("COMMENT");
   IElementType CRLF = new AsteriskTokenType("CRLF");
   IElementType EXTENSION_DEFINITION = new AsteriskTokenType("EXTENSION_DEFINITION");
@@ -28,11 +30,16 @@ public interface AsteriskTypes {
   IElementType INCLUDE_FILE_TARGET = new AsteriskTokenType("INCLUDE_FILE_TARGET");
   IElementType INCLUDE_STMT = new AsteriskTokenType("INCLUDE_STMT");
   IElementType SEPARATOR = new AsteriskTokenType("SEPARATOR");
+  IElementType VAR_NAME = new AsteriskTokenType("VAR_NAME");
+  IElementType VAR_VAL = new AsteriskTokenType("VAR_VAL");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == INCLUDE_CTX) {
+       if (type == ASSIGNMENT) {
+        return new AsteriskAssignmentImpl(node);
+      }
+      else if (type == INCLUDE_CTX) {
         return new AsteriskIncludeCtxImpl(node);
       }
       else if (type == INCLUDE_FILE) {

@@ -30,6 +30,8 @@ class AsteriskLexer implements FlexLexer {
   public static final int APPLICATION_ARGS = 10;
   public static final int INCLUDE_FILE = 12;
   public static final int INCLUDE_CTX = 14;
+  public static final int ASSIGNMENT = 16;
+  public static final int ASSIGNMENT_VAL = 18;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -38,7 +40,8 @@ class AsteriskLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7, 7
+     0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7,  7, 
+     8,  8,  9, 9
   };
 
   /** 
@@ -60,10 +63,10 @@ class AsteriskLexer implements FlexLexer {
 
   /* The ZZ_CMAP_A table has 320 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\0\1\2\1\1\1\17\1\20\1\1\22\0\1\2\2\0\1\6\4\0\1\24\1\25\2\0\1\5\3\0\12"+
-    "\32\1\4\1\3\1\0\1\30\1\31\2\0\23\22\1\33\6\22\1\16\1\4\1\21\3\0\1\34\1\23"+
-    "\1\11\1\14\1\15\2\23\1\34\1\7\2\23\1\12\1\23\1\10\1\34\3\23\1\34\1\27\1\13"+
-    "\2\23\1\26\2\23\12\0\1\17\242\0\2\17\26\0");
+    "\11\0\1\2\1\1\1\20\1\21\1\1\22\0\1\2\2\0\1\7\4\0\1\25\1\26\2\0\1\5\3\0\12"+
+    "\32\1\4\1\3\1\0\1\6\1\27\2\0\23\23\1\33\6\23\1\17\1\4\1\22\3\0\1\34\1\24\1"+
+    "\12\1\15\1\16\2\24\1\34\1\10\2\24\1\13\1\24\1\11\1\34\3\24\1\34\1\31\1\14"+
+    "\2\24\1\30\2\24\12\0\1\20\242\0\2\20\26\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -71,13 +74,14 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\10\0\1\1\1\2\1\3\1\4\1\5\5\1\1\6"+
-    "\2\7\2\10\2\1\1\11\1\12\1\1\4\0\1\13"+
-    "\1\0\1\14\1\0\1\15\3\0\1\16\1\0\1\17"+
-    "\3\0\1\10\2\0\1\20\3\0\1\21\1\22";
+    "\12\0\1\1\1\2\1\3\1\4\1\5\4\1\1\6"+
+    "\1\5\1\7\2\10\2\11\2\5\1\12\1\13\1\5"+
+    "\1\14\2\15\4\1\1\0\1\16\1\0\1\17\1\0"+
+    "\1\20\3\1\2\21\1\0\1\22\3\1\1\11\2\1"+
+    "\1\23\3\1\1\24\1\25";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[55];
+    int [] result = new int[63];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -103,15 +107,16 @@ class AsteriskLexer implements FlexLexer {
 
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\35\0\72\0\127\0\164\0\221\0\256\0\313"+
-    "\0\350\0\u0105\0\u0122\0\u013f\0\350\0\u015c\0\u0179\0\u0196"+
-    "\0\u01b3\0\u01d0\0\350\0\350\0\u01ed\0\u020a\0\u0227\0\u0244"+
-    "\0\u0261\0\u027e\0\u029b\0\u02b8\0\u02d5\0\u02f2\0\u030f\0\u032c"+
-    "\0\350\0\u0349\0\u0244\0\u0366\0\350\0\u0383\0\u03a0\0\u03bd"+
-    "\0\u032c\0\u03da\0\u0366\0\u03f7\0\u0414\0\u0431\0\u03da\0\u044e"+
-    "\0\u046b\0\350\0\u0488\0\u04a5\0\u04c2\0\350\0\350";
+    "\0\350\0\u0105\0\u0122\0\u013f\0\u015c\0\u0179\0\u0196\0\u01b3"+
+    "\0\u01d0\0\u01ed\0\u020a\0\u0196\0\u0227\0\u0196\0\u0196\0\u0244"+
+    "\0\u0261\0\u027e\0\u029b\0\u02b8\0\u02d5\0\u02f2\0\u030f\0\u0196"+
+    "\0\u032c\0\u0105\0\u0349\0\u0366\0\u0383\0\u03a0\0\u03bd\0\u0196"+
+    "\0\u03da\0\u029b\0\u03f7\0\u0196\0\u0414\0\u0431\0\u044e\0\u03a0"+
+    "\0\u03bd\0\u046b\0\u03f7\0\u0488\0\u04a5\0\u04c2\0\u046b\0\u04df"+
+    "\0\u04fc\0\u0122\0\u0519\0\u0536\0\u0553\0\u0122\0\u0122";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[55];
+    int [] result = new int[63];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -134,37 +139,66 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\11\1\12\1\13\1\14\1\11\1\15\1\16\1\17"+
-    "\5\11\1\20\1\21\1\0\1\13\15\11\1\12\1\13"+
-    "\2\11\1\15\11\11\1\0\1\13\7\11\1\22\5\11"+
-    "\1\12\1\13\2\11\1\23\1\11\1\24\7\11\1\0"+
-    "\1\13\6\11\1\24\2\11\1\25\2\24\1\11\1\12"+
-    "\1\13\2\11\1\15\2\11\1\26\6\11\1\0\1\13"+
-    "\11\11\1\27\3\11\1\12\1\13\2\11\1\15\11\11"+
-    "\1\0\1\13\1\11\1\30\10\11\1\30\2\11\1\12"+
-    "\1\13\2\11\1\15\11\11\1\0\1\13\3\11\1\31"+
-    "\10\11\1\32\1\12\1\13\1\32\1\11\13\32\1\13"+
-    "\7\32\2\11\3\32\1\33\1\12\1\13\1\33\1\11"+
-    "\13\33\1\13\7\33\1\34\1\11\3\33\36\0\2\12"+
-    "\15\0\1\12\15\0\1\12\1\13\15\0\1\13\14\0"+
-    "\1\14\1\0\33\14\7\0\1\35\35\0\1\36\52\0"+
-    "\1\37\6\0\1\40\1\0\15\40\2\0\14\40\31\0"+
-    "\1\41\35\0\1\25\26\0\1\42\34\0\1\42\5\0"+
-    "\1\27\11\0\7\43\4\0\2\43\2\0\2\43\3\0"+
-    "\2\43\1\44\1\0\15\44\2\0\14\44\1\32\2\0"+
-    "\1\32\1\0\13\32\1\0\7\32\2\0\3\32\1\33"+
-    "\2\0\1\33\1\0\13\33\1\0\7\33\2\0\3\33"+
-    "\31\0\1\45\13\0\1\46\35\0\1\47\52\0\1\50"+
-    "\5\0\1\40\1\0\15\40\2\0\1\51\13\40\1\52"+
-    "\1\0\15\52\2\0\14\52\1\44\1\0\15\44\2\0"+
-    "\4\44\1\53\7\44\11\0\1\54\35\0\1\55\37\0"+
-    "\1\56\17\0\1\52\1\0\15\52\2\0\4\52\1\57"+
-    "\7\52\12\0\1\60\35\0\1\61\31\0\1\62\37\0"+
-    "\1\63\35\0\1\64\34\0\1\65\35\0\1\66\34\0"+
-    "\1\67\17\0";
+    "\1\13\1\14\1\15\1\16\1\17\1\13\1\17\1\20"+
+    "\1\21\5\13\1\22\1\23\1\13\1\15\5\13\1\17"+
+    "\5\13\1\17\1\14\1\15\2\17\1\24\1\25\11\17"+
+    "\1\0\1\15\14\17\1\14\1\15\2\17\1\26\2\17"+
+    "\1\27\7\17\1\0\1\15\7\17\1\27\1\30\2\27"+
+    "\1\17\1\14\1\15\2\17\1\24\3\17\1\31\6\17"+
+    "\1\0\1\15\10\17\1\32\3\17\1\14\1\15\2\17"+
+    "\1\24\12\17\1\0\1\15\1\17\1\33\7\17\1\33"+
+    "\2\17\1\14\1\15\2\17\1\24\12\17\1\0\1\15"+
+    "\3\17\1\34\7\17\1\35\1\14\1\15\1\35\1\17"+
+    "\1\35\1\17\12\35\1\15\5\35\1\17\5\35\1\36"+
+    "\1\14\1\15\1\36\1\17\1\36\1\37\12\36\1\15"+
+    "\5\36\1\17\5\36\1\17\1\14\1\15\2\17\1\24"+
+    "\1\40\11\17\1\0\1\15\13\17\1\41\1\14\1\42"+
+    "\15\41\1\0\1\15\13\41\1\13\2\0\1\13\1\0"+
+    "\1\13\1\0\12\13\1\0\5\13\1\0\5\13\1\0"+
+    "\2\14\16\0\1\14\14\0\1\14\1\15\16\0\1\15"+
+    "\13\0\1\16\1\0\33\16\35\0\1\13\2\0\1\13"+
+    "\1\0\1\13\1\0\1\13\1\43\10\13\1\0\5\13"+
+    "\1\0\6\13\2\0\1\13\1\0\1\13\1\0\2\13"+
+    "\1\44\7\13\1\0\5\13\1\0\6\13\2\0\1\13"+
+    "\1\0\1\13\1\0\12\13\1\0\5\13\1\0\1\45"+
+    "\4\13\1\46\1\0\1\47\1\46\1\47\1\46\1\47"+
+    "\11\46\1\13\1\0\5\46\1\47\5\46\27\0\1\50"+
+    "\37\0\1\30\27\0\1\51\34\0\1\51\4\0\1\32"+
+    "\12\0\7\52\4\0\2\52\3\0\2\52\1\0\2\52"+
+    "\1\53\1\0\16\53\2\0\13\53\1\35\2\0\1\35"+
+    "\1\0\1\35\1\0\12\35\1\0\5\35\1\0\5\35"+
+    "\1\36\2\0\1\36\1\0\1\36\1\0\12\36\1\0"+
+    "\5\36\1\0\5\36\27\0\1\54\5\0\1\41\1\0"+
+    "\16\41\2\0\13\41\1\13\2\0\1\13\1\0\1\13"+
+    "\1\0\2\13\1\55\7\13\1\0\5\13\1\0\6\13"+
+    "\2\0\1\13\1\0\1\13\1\0\3\13\1\56\6\13"+
+    "\1\0\5\13\1\0\6\13\2\0\1\13\1\0\1\13"+
+    "\1\0\12\13\1\0\5\13\1\0\1\13\1\57\3\13"+
+    "\1\46\1\0\1\47\1\46\1\47\1\46\1\47\11\46"+
+    "\1\13\1\0\1\60\4\46\1\47\5\46\1\47\1\0"+
+    "\16\47\2\0\1\61\12\47\1\62\1\0\16\62\2\0"+
+    "\13\62\1\53\1\0\16\53\2\0\4\53\1\63\6\53"+
+    "\1\13\2\0\1\13\1\0\1\13\1\0\3\13\1\64"+
+    "\6\13\1\0\5\13\1\0\6\13\2\0\1\13\1\0"+
+    "\1\13\1\0\4\13\1\65\5\13\1\0\5\13\1\0"+
+    "\6\13\2\0\1\13\1\0\1\13\1\0\7\13\1\66"+
+    "\2\13\1\0\5\13\1\0\5\13\1\62\1\0\16\62"+
+    "\2\0\4\62\1\67\6\62\1\13\2\0\1\13\1\0"+
+    "\1\13\1\0\4\13\1\70\5\13\1\0\5\13\1\0"+
+    "\6\13\2\0\1\13\1\0\1\13\1\0\5\13\1\71"+
+    "\4\13\1\0\5\13\1\0\6\13\2\0\1\13\1\0"+
+    "\1\13\1\0\2\13\1\72\7\13\1\0\5\13\1\0"+
+    "\6\13\2\0\1\13\1\0\1\13\1\0\5\13\1\73"+
+    "\4\13\1\0\5\13\1\0\6\13\2\0\1\13\1\0"+
+    "\1\13\1\0\6\13\1\74\3\13\1\0\5\13\1\0"+
+    "\6\13\2\0\1\13\1\0\1\13\1\0\6\13\1\75"+
+    "\3\13\1\0\5\13\1\0\6\13\2\0\1\13\1\0"+
+    "\1\13\1\0\7\13\1\76\2\13\1\0\5\13\1\0"+
+    "\6\13\2\0\1\13\1\0\1\13\1\0\7\13\1\77"+
+    "\2\13\1\0\5\13\1\0\5\13";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1247];
+    int [] result = new int[1392];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -202,12 +236,12 @@ class AsteriskLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\10\0\1\11\3\1\1\11\5\1\2\11\10\1\4\0"+
-    "\1\11\1\0\1\1\1\0\1\11\3\0\1\1\1\0"+
-    "\1\1\3\0\1\1\2\0\1\11\3\0\2\11";
+    "\12\0\4\1\1\11\4\1\1\11\1\1\2\11\10\1"+
+    "\1\11\6\1\1\0\1\11\1\0\1\1\1\0\1\11"+
+    "\5\1\1\0\15\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[55];
+    int [] result = new int[63];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -521,94 +555,109 @@ class AsteriskLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { return TokenType.BAD_CHARACTER;
+            { yybegin(ASSIGNMENT);
+    return AsteriskTypes.VAR_NAME;
             }
-          case 19: break;
+          case 22: break;
           case 2: 
             { yybegin(YYINITIAL);
     return TokenType.WHITE_SPACE;
             }
-          case 20: break;
+          case 23: break;
           case 3: 
             { yybegin(yystate());
   return TokenType.WHITE_SPACE;
             }
-          case 21: break;
+          case 24: break;
           case 4: 
             { yybegin(YYINITIAL);
     return AsteriskTypes.COMMENT;
             }
-          case 22: break;
+          case 25: break;
           case 5: 
+            { return TokenType.BAD_CHARACTER;
+            }
+          case 26: break;
+          case 6: 
             { yybegin(yystate());
   return AsteriskTypes.SEPARATOR;
             }
-          case 23: break;
-          case 6: 
+          case 27: break;
+          case 7: 
             { yybegin(PRIORITY);
       return AsteriskTypes.SEPARATOR;
             }
-          case 24: break;
-          case 7: 
+          case 28: break;
+          case 8: 
             { yybegin(EXTENSION);
       return AsteriskTypes.EXT_EXTENSION;
             }
-          case 25: break;
-          case 8: 
+          case 29: break;
+          case 9: 
             { yybegin(APPLICATION_NAME);
       return AsteriskTypes.EXT_PRIORITY;
             }
-          case 26: break;
-          case 9: 
+          case 30: break;
+          case 10: 
             { yybegin(YYINITIAL);
       return AsteriskTypes.INCLUDE_FILE_TARGET;
             }
-          case 27: break;
-          case 10: 
+          case 31: break;
+          case 11: 
             { yybegin(YYINITIAL);
       return AsteriskTypes.INCLUDE_CTX_CONTEXT;
             }
-          case 28: break;
-          case 11: 
+          case 32: break;
+          case 12: 
+            { yybegin(ASSIGNMENT_VAL);
+      return AsteriskTypes.ASSIGNMENT_OPERATOR;
+            }
+          case 33: break;
+          case 13: 
+            { yybegin(YYINITIAL);
+      return AsteriskTypes.VAR_VAL;
+            }
+          case 34: break;
+          case 14: 
             { yybegin(EXTENSION);
        return AsteriskTypes.EXT_OPERATOR;
             }
-          case 29: break;
-          case 12: 
+          case 35: break;
+          case 15: 
             { yybegin(APPLICATION_ARGS);
     return AsteriskTypes.APPLICATION_NAME;
             }
-          case 30: break;
-          case 13: 
+          case 36: break;
+          case 16: 
             { yybegin(INCLUDE_CTX);
-      return AsteriskTypes.EXT_OPERATOR;
+      return AsteriskTypes.INCLUDE_CTX_OPERATOR;
             }
-          case 31: break;
-          case 14: 
+          case 37: break;
+          case 17: 
             { yybegin(YYINITIAL);
     return AsteriskTypes.EXTENSION_DEFINITION;
             }
-          case 32: break;
-          case 15: 
+          case 38: break;
+          case 18: 
             { yybegin(YYINITIAL);
     return AsteriskTypes.APPLICATION_ARGS;
             }
-          case 33: break;
-          case 16: 
+          case 39: break;
+          case 19: 
             { yybegin(PROGRAM_INSTRUCTION);
     return AsteriskTypes.EXT_INST_LEFT;
             }
-          case 34: break;
-          case 17: 
+          case 40: break;
+          case 20: 
             { yybegin(INCLUDE_CTX);
     return AsteriskTypes.INCLUDE_CTX_LEFT;
             }
-          case 35: break;
-          case 18: 
+          case 41: break;
+          case 21: 
             { yybegin(INCLUDE_FILE);
   return AsteriskTypes.INCLUDE_STMT;
             }
-          case 36: break;
+          case 42: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }
