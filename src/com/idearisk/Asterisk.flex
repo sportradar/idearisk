@@ -27,15 +27,17 @@ INCLUDE="#include"
 EXTENSION_DEFINITION="[".+"]"
 
 APPLICATION_NAME=[A-Z][a-zA-Z]+
-APPLICATION_ARGS="(".+")"
+APPLICATION_ARGS="(".*")"
 
 INCLUDE_CTX_LEFT="include"
 INCLUDE_CTX_OPERATOR="=>"
 
 EXT_INST_LEFT="exten"
 EXT_OPERATOR="=>"
-EXT_EXTENSION=[0-9]+ | [hioatTs]
-EXT_PRIORITY=[0-9]+ | n | [0-9]+"(".+")" | n"(".+")"
+EXT_PATTERN="_"[^,]+
+EXT_EXTENSION=[0-9*]+ | [hioatTs] | {EXT_PATTERN}
+PRIORITY_LABEL=[^)]+
+EXT_PRIORITY=[0-9]+ | n | [0-9]+"("{PRIORITY_LABEL}")" | n"("{PRIORITY_LABEL}")"
 
 %state PROGRAM_INSTRUCTION
 %state EXTENSION

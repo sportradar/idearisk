@@ -85,15 +85,23 @@ public class AsteriskParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // EXT_INST_LEFT EXT_OPERATOR EXT_EXTENSION SEPARATOR EXT_PRIORITY SEPARATOR APPLICATION_NAME APPLICATION_ARGS
+  // EXT_INST_LEFT EXT_OPERATOR EXT_EXTENSION SEPARATOR EXT_PRIORITY SEPARATOR APPLICATION_NAME [APPLICATION_ARGS]
   public static boolean PROGRAM_STATEMENT(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "PROGRAM_STATEMENT")) return false;
     if (!nextTokenIs(b, EXT_INST_LEFT)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, EXT_INST_LEFT, EXT_OPERATOR, EXT_EXTENSION, SEPARATOR, EXT_PRIORITY, SEPARATOR, APPLICATION_NAME, APPLICATION_ARGS);
+    r = consumeTokens(b, 0, EXT_INST_LEFT, EXT_OPERATOR, EXT_EXTENSION, SEPARATOR, EXT_PRIORITY, SEPARATOR, APPLICATION_NAME);
+    r = r && PROGRAM_STATEMENT_7(b, l + 1);
     exit_section_(b, m, PROGRAM_STATEMENT, r);
     return r;
+  }
+
+  // [APPLICATION_ARGS]
+  private static boolean PROGRAM_STATEMENT_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PROGRAM_STATEMENT_7")) return false;
+    consumeToken(b, APPLICATION_ARGS);
+    return true;
   }
 
   /* ********************************************************** */
